@@ -327,7 +327,7 @@ return 0;
 
 FD_ZERO(&fds);
 FD_SET(fd_cap, &fds);
-unsigned short rgb_image[480][640];
+unsigned short gray_image[480][640];
 while (1) {
 
 
@@ -365,7 +365,7 @@ g[0] = y0 - ((int)(.39465 * (u)- .58060 * (v))>>16);
 b[0] = y0 + ((int)(2.03211 * (u))>>16);
 //b[1] = y1 + ((int)(2.03211 * (u))>>16);
 
-rgb_image[i][j] = ((((r[0]>>3))<<11) | (((g[0]>>2))<<5) | ((b[0]>>3)));
+gray_image[i][j] = ((((r[0]>>3))<<11) | (((g[0]>>2))<<5) | ((b[0]>>3)));
 //rgb_image[i+2][j+2] = ((((r[1]>>3))<<11) | (((g[1]>>2))<<5) | ((b[1]>>3)));
 
 //*((unsigned short*)(fbp + offset)) = rgb_image[i][j];/*((((r[0]>>3))<<11) | (((g[0]>>2))<<5) | ((b[0]>>3)));*/
@@ -442,7 +442,14 @@ offset2 = (j+vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (i+vinfo.yoffset) * (fi
 	//Testing for now display just image when we check for maxima draw image unless past threshold draw RED
 	for(i=0;i<480;i++){
 		for(j=0;j<640;j++){
-			offset = (j+vinfo.xoffset)*(vinfo.bits_per_pixel/8) + (i+vinfo.yoffset)*finfo.line_length;
+			offset = (j+vinfo.xoffset)*(vinfo.bits_per_pixel/8) + (i+vinfo.yoffset)*finfo.line_length;\
+			if(harris_measure[i][j] == gray_image[i][j])
+			{
+				if (harris_measure[i][j] >= THRESHOLD){
+					*((unsigned short*)(fbp + offset)) = (255 << 11) | (0<<5) | 0;
+				}
+				
+			}
 			*((unsigned short*)(fbp + offset)) = gray_image[i][j];
 		}
 	}
