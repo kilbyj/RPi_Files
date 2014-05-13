@@ -160,7 +160,7 @@ return 0;
 
 FD_ZERO(&fds);
 FD_SET(fd_cap, &fds);
-unsigned short gray_image[480][640];
+unsigned short rgb_image[480][640];
 while (1) {
 
 
@@ -189,13 +189,13 @@ u = *((unsigned char *) (buffer+i*640*2  +j*2 + 1)) - 128;
 
 v = *((unsigned char *) (buffer+i*640*2  +j*2 + 3)) - 128;
 
-r[0] = y0 +((int)(1.13983 *(v))>>16);
+r[0] = (y0 +((int)(1.13983 *(v))>>16) > 255) ? 255 : y0 +((int)(1.13983 *(v))>>16);
 
-g[0] = y0 - ((int)(.39465 * (u)- .58060 * (v))>>16);
+g[0] = (y0 - ((int)(.39465 * (u)- .58060 * (v))>>16)>255)? 255 : y0 - ((int)(.39465 * (u)- .58060 * (v))>>16);
 
-b[0] = y0 + ((int)(2.03211 * (u))>>16);
+b[0] = (y0 + ((int)(2.03211 * (u))>>16)>255)? 255 : y0 + ((int)(2.03211 * (u))>>16);
 
-gray_image[i][j] = ((((r[0]>>3))<<11) | (((g[0]>>2))<<5) | ((b[0]>>3)));
+rgb_image[i][j] = ((((r[0]>>3))<<11) | (((g[0]>>2))<<5) | ((b[0]>>3)));
 
 
 }
@@ -212,7 +212,7 @@ gray_image[i][j] = ((((r[0]>>3))<<11) | (((g[0]>>2))<<5) | ((b[0]>>3)));
 				}
 
 			}*/
-			*((unsigned short*)(fbp + offset)) = gray_image[i][j];
+			*((unsigned short*)(fbp + offset)) = rgb_image[i][j];
 		}
 	}
         
